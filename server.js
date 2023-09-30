@@ -23,7 +23,7 @@ app.listen(PORT, () => {
 
 app.post('/sockIdea', async (req, res) => {
     // Extracting size and type from the request body
-    const { size, type } = req.body;
+    const { size, type, quality } = req.body;
 
     try {
         const response = await axios.post(endpoint, {
@@ -35,7 +35,7 @@ app.post('/sockIdea', async (req, res) => {
                 },
                 {
                     role: "user",
-                    content: `Give me a cool sock idea for a ${type} themed ${size}!`
+                    content: `Give me a cool sock idea for a ${quality} ${type} themed ${size}!`
                 }
             ]
         }, {

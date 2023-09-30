@@ -22,17 +22,20 @@ app.listen(PORT, () => {
 });
 
 app.post('/sockIdea', async (req, res) => {
+    // Extracting size and type from the request body
+    const { size, type } = req.body;
+
     try {
         const response = await axios.post(endpoint, {
             model: "gpt-3.5-turbo",
             messages: [
                 {
                     role: "system",
-                    content: "You are going to give sock ideas. You only respond with three values seperated by a comma. These are the Name of the sock, The type of sock and the description of the sock. You never use commas except when seperating the values"
+                    content: "You are going to give sock ideas. You only respond with three values separated by a comma. These are the Name of the sock, The type of sock, and the description of the sock. You never use commas except when separating the values."
                 },
                 {
                     role: "user",
-                    content: "Give me a cool sock idea!"
+                    content: `Give me a cool sock idea for a ${type} themed ${size}!`
                 }
             ]
         }, {
@@ -42,7 +45,7 @@ app.post('/sockIdea', async (req, res) => {
             }
         });
 
-        const openAIResponse = response.data.choices[0].message.content; // Corrected line
+        const openAIResponse = response.data.choices[0].message.content;
         res.send(openAIResponse);
     } catch (error) {
         console.error("Error calling OpenAI API:", error.response ? error.response.data : error.message);

@@ -31,7 +31,7 @@ app.post('/sockIdea', async (req, res) => {
             messages: [
                 {
                     role: "system",
-                    content: "You are going to give sock ideas. You only respond with three values separated by a comma. These are the Name of the sock, The type of sock, and the description of the sock. You never use commas except when separating the values."
+                    content: "You are going to give sock ideas structured like this: [Name]; [type]; [slogan]; [description] (With the semicolons). The description has to be 3-5 sentences long. Describe the socks in a cool manner!"
                 },
                 {
                     role: "user",

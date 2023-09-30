@@ -1,6 +1,11 @@
 const express = require('express');
 const axios = require('axios');
+const cors = require('cors');
+
 const app = express();
+
+// Allow cross origin
+app.use(cors());
 
 const PORT = process.env.PORT || 3000;
 

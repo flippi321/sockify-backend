@@ -8,13 +8,16 @@ const endpoint = process.env.OPENAI_ENDPOINT;
 const api_key = process.env.OPENAI_API_KEY;
 
 // Allow cross origin
-app.use(cors());
+app.use(cors({
+    origin: '*'
+}));
+
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
 app.get('/', (req, res) => {
-    res.send('Generic Sock, Standard, This sock is very generic and not really that cool');
+    res.send('Hello World');
 });
 
 app.listen(PORT, () => {

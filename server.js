@@ -31,7 +31,7 @@ app.post('/sockIdea', async (req, res) => {
             messages: [
                 {
                     role: "system",
-                    content: "You are going to give sock ideas structured like this: [Name]; [type]; [slogan]; [description] (With the semicolons). The description has to be 3-5 sentences long. Describe the socks in a cool manner!"
+                    content: "You are going to give sock ideas structured like this: [Name]; [type]; [slogan]; [description] (With the semicolons). The description has to be 3-5 sentences long and reflect on the quality (Terrible quality socks should be ridiculed). Describe the socks in a cool and unique manner!"
                 },
                 {
                     role: "user",

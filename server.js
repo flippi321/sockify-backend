@@ -10,7 +10,7 @@ app.use(cors());
 const PORT = process.env.PORT || 3000;
 
 app.get('/', (req, res) => {
-    res.send('Hello World!');
+    res.send('Generic Sock, Standard, This sock is very generic and not really that cool');
 });
 
 app.listen(PORT, () => {

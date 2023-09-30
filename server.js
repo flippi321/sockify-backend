@@ -9,6 +9,7 @@ const api_key = process.env.OPENAI_API_KEY;
 
 // Allow cross origin
 app.use(cors());
+app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
@@ -22,17 +23,26 @@ app.listen(PORT, () => {
 
 app.post('/sockIdea', async (req, res) => {
     try {
-        const response = await axios.post(OPENAI_ENDPOINT, {
-            prompt: "Your prompt here",
-            max_tokens: 150
+        const response = await axios.post(endpoint, {
+            model: "gpt-3.5-turbo",
+            messages: [
+                {
+                    role: "system",
+                    content: "You are going to give sock ideas. You only respond with three values seperated by a comma. These are the Name of the sock, The type of sock and the description of the sock. You never use commas except when seperating the values"
+                },
+                {
+                    role: "user",
+                    content: "Give me a cool sock idea!"
+                }
+            ]
         }, {
             headers: {
-                'Authorization': `Bearer ${OPENAI_API_KEY}`,
+                'Authorization': `Bearer ${api_key}`,
                 'Content-Type': 'application/json'
             }
         });
 
-        const openAIResponse = response.data.choices[0].text.trim();
+        const openAIResponse = response.data.choices[0].message.content; // Corrected line
         res.send(openAIResponse);
     } catch (error) {
         console.error("Error calling OpenAI API:", error.response ? error.response.data : error.message);

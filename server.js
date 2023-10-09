@@ -52,7 +52,7 @@ app.post('/sockIdea', async (req, res) => {
                 },
                 {
                     role: "user",
-                    content: `Give me a cool sock idea for a ${getQuality(type, size)}!`
+                    content: `Give me a cool sock idea for a ${getSocks(type, size)}!`
                 }
             ]
         }, {

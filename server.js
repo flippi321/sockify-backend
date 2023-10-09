@@ -24,9 +24,23 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
+const getSocks = (type, size) => {
+    switch(type){
+        case("SCI-FI"):
+            return ("technical SCI-FI " + size + " using cool futuristic terms describing it's functionality and looks");
+        case("Steampunk"):
+            return ("steampunk-themed " + size + " incorporating steam techonolgy and cogs. Use a somewhat old english dialect when writing");
+        case("Festive"):
+            return ("festive " + size + " themed around a holiday or festival. Describe details about the socks and how they corrolate to the given festivity");
+        case("Soviet"):
+            return ("terrible quality, ironicly bad Soviet " + size + " written in a sterotypically bad Soviet dialect");
+    }
+    return "pair of normal " + size + " socks. Describe the socks generic and boring details, or lack therof";
+};
+
 app.post('/sockIdea', async (req, res) => {
     // Extracting size and type from the request body
-    const { size, type, quality } = req.body;
+    const { size, type } = req.body;
 
     try {
         const response = await axios.post(endpoint, {
@@ -38,7 +52,7 @@ app.post('/sockIdea', async (req, res) => {
                 },
                 {
                     role: "user",
-                    content: `Give me a cool sock idea for a ${quality} ${type} themed ${size}!`
+                    content: `Give me a cool sock idea for a ${getQuality(type, size)}!`
                 }
             ]
         }, {

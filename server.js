@@ -41,39 +41,54 @@ const getSocks = (type, theme) => {
 const sovietify = (sentence) => {
     // Remove 'the' and 'The' from the sentence
     return sentence.replace(/\b(?:the|The)\b/g, '').trim();
-};  
+}; 
+
+// Returns true if text contains 4 semicolons ";"
+const isCorrectlyFormatted = (text) => {
+  const matches = text.match(/;/g);
+  return matches && matches.length === 4;
+}
 
 app.post('/sockIdea', async (req, res) => {
     // Extracting size and type from the request body
     const { type, theme } = req.body;
-    console.log(type + " " + theme)
+    var requests = 0; // How many requests we have sent
     try {
-        const response = await axios.post(endpoint, {
-            model: "gpt-3.5-turbo",
-            messages: [
-                {
-                    role: "system",
-                    content: "You are going to give sock ideas structured like this: [Name]; [type of sock]; [theme]; [slogan]; [description] (With the semicolons). The description has to be 3-5 sentences long and reflect on the quality (Terrible quality socks should be ridiculed). Describe the socks in a cool and unique manner!"
-                },
-                {
-                    role: "user",
-                    content: `Give me a cool sock idea for a ${getSocks(type, theme)}!`
+        var openAIResponse = "";
+
+        // As long as we don't get a satisfactory result we will ask for a new response
+        while(!isCorrectlyFormatted(openAIResponse) && requests < 3){
+            // Increase requests by 1
+            console.log("We have requested a sock  " + requests++ + " times");
+            
+            // Fetch response from OpenAI API
+            const response = await axios.post(endpoint, {
+                model: "gpt-3.5-turbo",
+                messages: [
+                    {
+                        role: "system",
+                        content: "You are going to give sock ideas structured like this: [Name]; [type of sock]; [theme]; [slogan]; [description] (With the semicolons). The description has to be 3-5 sentences long and reflect on the quality (Terrible quality socks should be ridiculed). Describe the socks in a cool and unique manner!"
+                    },
+                    {
+                        role: "user",
+                        content: `Give me a cool sock idea for a ${getSocks(type, theme)}!`
+                    }
+                ]
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${api_key}`,
+                    'Content-Type': 'application/json'
                 }
-            ]
-        }, {
-            headers: {
-                'Authorization': `Bearer ${api_key}`,
-                'Content-Type': 'application/json'
+            });
+    
+            openAIResponse = response.data.choices[0].message.content;
+            console.log("Theme:" + theme)
+            console.log("Soviet?" + theme=="Soviet")         
+            if(theme=="Soviet"){
+                res.send(sovietify(openAIResponse));
+            } else {
+                res.send(openAIResponse);
             }
-        });
-
-        const openAIResponse = response.data.choices[0].message.content;
-        console.log(openAIResponse);
-
-        if(theme=="Soviet"){
-            res.send(sovietify(openAIResponse));
-        } else {
-            res.send(openAIResponse);
         }
     } catch (error) {
         console.error("Error calling OpenAI API:", error.response ? error.response.data : error.message);

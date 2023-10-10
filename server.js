@@ -46,7 +46,7 @@ const sovietify = (sentence) => {
 app.post('/sockIdea', async (req, res) => {
     // Extracting size and type from the request body
     const { type, theme } = req.body;
-
+    console.log(type + " " + theme)
     try {
         const response = await axios.post(endpoint, {
             model: "gpt-3.5-turbo",
@@ -70,7 +70,7 @@ app.post('/sockIdea', async (req, res) => {
         const openAIResponse = response.data.choices[0].message.content;
         console.log(openAIResponse);
 
-        if(type=="Soviet"){
+        if(theme=="Soviet"){
             res.send(sovietify(openAIResponse));
         } else {
             res.send(openAIResponse);

@@ -72,8 +72,9 @@ app.post('/sockIdea', async (req, res) => {
 
         if(type=="Soviet"){
             res.send(sovietify(openAIResponse));
+        } else {
+            res.send(openAIResponse);
         }
-        res.send(openAIResponse);
     } catch (error) {
         console.error("Error calling OpenAI API:", error.response ? error.response.data : error.message);
         res.status(500).send("Failed to retrieve data from OpenAI");
@@ -84,19 +85,22 @@ app.post('/sockIdea/Image', async (req, res) => {
     const { description } = req.body;
 
     try {
-        const response = await axios.post(endpoint, {
-            model: "image",
+        const response = await axios.post(
+          'https://api.openai.com/v1/images/generations',
+          {
             prompt: description,
-            max_responses: 1
-        }, {
+            n: 1,                                //define the number of images
+            size: '512x512',                     //define the resolution of image
+          },
+          {
             headers: {
                 'Authorization': `Bearer ${api_key}`,
                 'Content-Type': 'application/json'
             }
-        });
-
-        // Assuming DALL·E's API response contains a URL to the generated image
-        const imageUrl = response.data.url;
+          }
+        );
+    
+        const imageUrl = response.data.data[0].url;
         res.send(imageUrl);
 
     } catch (error) {

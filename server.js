@@ -24,18 +24,18 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-const getSocks = (type, size) => {
-    switch(type){
+const getSocks = (type, theme) => {
+    switch(theme){
         case("SCI-FI"):
-            return ("technical SCI-FI " + size + " using cool futuristic terms describing it's functionality and looks");
+            return ("technical SCI-FI themed " + type + " using cool futuristic terms describing it's functionality and looks");
         case("Steampunk"):
-            return ("steampunk-themed " + size + " incorporating steam techonolgy and cogs. Use a somewhat old english dialect when writing");
+            return ("steampunk themed " + type + " incorporating steam techonolgy and cogs. Use a somewhat old english dialect when writing");
         case("Festive"):
-            return ("festive " + size + " themed around a holiday or festival. Describe details about the socks and how they corrolate to the given festivity");
+            return ("festive " + type + " themed around a holiday or festival. Describe details about the socks and how they corrolate to the given festivity");
         case("Soviet"):
-            return ("terrible quality, ironicly bad Soviet " + size + " written in a sterotypically bad Soviet dialect.");
+            return ("terrible quality, ironicly bad Soviet themed " + type + " written in a sterotypically bad Soviet dialect.");
     }
-    return "pair of normal " + size + " socks. Describe the socks generic and boring details, or lack therof";
+    return "pair of normal socks. Describe the socks generic and boring details, or lack therof";
 };
 
 const sovietify = (sentence) => {
@@ -43,10 +43,9 @@ const sovietify = (sentence) => {
     return sentence.replace(/\b(?:the|The)\b/g, '').trim();
 };  
 
-
 app.post('/sockIdea', async (req, res) => {
     // Extracting size and type from the request body
-    const { size, type } = req.body;
+    const { type, theme } = req.body;
 
     try {
         const response = await axios.post(endpoint, {
@@ -54,11 +53,11 @@ app.post('/sockIdea', async (req, res) => {
             messages: [
                 {
                     role: "system",
-                    content: "You are going to give sock ideas structured like this: [Name]; [type]; [slogan]; [description] (With the semicolons). The description has to be 3-5 sentences long and reflect on the quality (Terrible quality socks should be ridiculed). Describe the socks in a cool and unique manner!"
+                    content: "You are going to give sock ideas structured like this: [Name]; [type of sock]; [theme]; [slogan]; [description] (With the semicolons). The description has to be 3-5 sentences long and reflect on the quality (Terrible quality socks should be ridiculed). Describe the socks in a cool and unique manner!"
                 },
                 {
                     role: "user",
-                    content: `Give me a cool sock idea for a ${getSocks(type, size)}!`
+                    content: `Give me a cool sock idea for a ${getSocks(type, theme)}!`
                 }
             ]
         }, {
@@ -69,6 +68,7 @@ app.post('/sockIdea', async (req, res) => {
         });
 
         const openAIResponse = response.data.choices[0].message.content;
+        console.log(openAIResponse);
 
         if(type=="Soviet"){
             res.send(sovietify(openAIResponse));
@@ -88,7 +88,7 @@ app.post('/sockIdea/Image', async (req, res) => {
         const response = await axios.post(
           'https://api.openai.com/v1/images/generations',
           {
-            prompt: type + " socks called " + name + ", with the description: " + description,
+            prompt: type + " socks with the description: " + description,
             n: 1,                                //define the number of images
             size: '256x256',                     //define the resolution of image
           },

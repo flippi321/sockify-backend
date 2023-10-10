@@ -90,7 +90,7 @@ app.post('/sockIdea/Image', async (req, res) => {
           {
             prompt: description,
             n: 1,                                //define the number of images
-            size: '512x512',                     //define the resolution of image
+            size: '256x256',                     //define the resolution of image
           },
           {
             headers: {

@@ -33,10 +33,16 @@ const getSocks = (type, size) => {
         case("Festive"):
             return ("festive " + size + " themed around a holiday or festival. Describe details about the socks and how they corrolate to the given festivity");
         case("Soviet"):
-            return ("terrible quality, ironicly bad Soviet " + size + " written in a sterotypically bad Soviet dialect");
+            return ("terrible quality, ironicly bad Soviet " + size + " written in a sterotypically bad Soviet dialect.");
     }
     return "pair of normal " + size + " socks. Describe the socks generic and boring details, or lack therof";
 };
+
+const sovietify = (sentence) => {
+    // Remove 'the' and 'The' from the sentence
+    return sentence.replace(/\b(?:the|The)\b/g, '').trim();
+};  
+
 
 app.post('/sockIdea', async (req, res) => {
     // Extracting size and type from the request body
@@ -63,6 +69,10 @@ app.post('/sockIdea', async (req, res) => {
         });
 
         const openAIResponse = response.data.choices[0].message.content;
+
+        if(type=="Soviet"){
+            res.send(sovietify(openAIResponse));
+        }
         res.send(openAIResponse);
     } catch (error) {
         console.error("Error calling OpenAI API:", error.response ? error.response.data : error.message);

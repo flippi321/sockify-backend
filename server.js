@@ -79,3 +79,28 @@ app.post('/sockIdea', async (req, res) => {
         res.status(500).send("Failed to retrieve data from OpenAI");
     }
 });
+
+app.post('/sockIdea/Image', async (req, res) => {
+    const { description } = req.body;
+
+    try {
+        const response = await axios.post(endpoint, {
+            model: "image",
+            prompt: description,
+            max_responses: 1
+        }, {
+            headers: {
+                'Authorization': `Bearer ${api_key}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // Assuming DALL·E's API response contains a URL to the generated image
+        const imageUrl = response.data.url;
+        res.send(imageUrl);
+
+    } catch (error) {
+        console.error("Error calling DALL·E API:", error.response ? error.response.data : error.message);
+        res.status(500).send("Failed to retrieve image from DALL·E");
+    }
+});

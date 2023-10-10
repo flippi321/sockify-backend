@@ -82,13 +82,13 @@ app.post('/sockIdea', async (req, res) => {
 });
 
 app.post('/sockIdea/Image', async (req, res) => {
-    const { description } = req.body;
+    const { name, type, description} = req.body;
 
     try {
         const response = await axios.post(
           'https://api.openai.com/v1/images/generations',
           {
-            prompt: description,
+            prompt: type + " socks called " + name + ", with the description: " + description,
             n: 1,                                //define the number of images
             size: '256x256',                     //define the resolution of image
           },

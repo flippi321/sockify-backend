@@ -50,18 +50,15 @@ const isCorrectlyFormatted = (text) => {
 }
 
 app.post('/sockIdea', async (req, res) => {
-    // Extracting size and type from the request body
     const { type, theme } = req.body;
-    var requests = 0; // How many requests we have sent
-    try {
-        var openAIResponse = "";
+    let requests = 0;
+    let openAIResponse = "";
+    let formattedResponse = "";
 
-        // As long as we don't get a satisfactory result we will ask for a new response
-        while(!isCorrectlyFormatted(openAIResponse) && requests < 3){
-            // Increase requests by 1
-            console.log("We have requested a sock  " + requests++ + " times");
+    try {
+        while(!isCorrectlyFormatted(openAIResponse) && requests < 5){
+            console.log("We have requested a sock " + requests++ + " times");
             
-            // Fetch response from OpenAI API
             const response = await axios.post(endpoint, {
                 model: "gpt-3.5-turbo",
                 messages: [
@@ -82,19 +79,22 @@ app.post('/sockIdea', async (req, res) => {
             });
     
             openAIResponse = response.data.choices[0].message.content;
-            console.log("Theme:" + theme)
-            console.log("Soviet?" + theme=="Soviet")         
-            if(theme=="Soviet"){
-                res.send(sovietify(openAIResponse));
+
+            if(theme === "Soviet"){
+                formattedResponse = sovietify(openAIResponse);
             } else {
-                res.send(openAIResponse);
+                formattedResponse = openAIResponse;
             }
         }
+
+        res.send({ response: formattedResponse });
+
     } catch (error) {
         console.error("Error calling OpenAI API:", error.response ? error.response.data : error.message);
         res.status(500).send("Failed to retrieve data from OpenAI");
     }
 });
+
 
 app.post('/sockIdea/Image', async (req, res) => {
     const { name, type, description} = req.body;

@@ -46,7 +46,7 @@ const sovietify = (sentence) => {
 // Returns true if text contains 4 semicolons ";"
 const isCorrectlyFormatted = (text) => {
   const matches = text.match(/;/g);
-  return matches && matches.length === 4;
+  return matches && matches.length >= 4;
 };
 
 const sanitizeResponse = (response) => {
@@ -70,7 +70,7 @@ app.post('/sockIdea', async (req, res) => {
     let formattedResponse = "";
 
     try {
-        while(!isCorrectlyFormatted(openAIResponse) && requests < 5){
+        while(!isCorrectlyFormatted(openAIResponse) && requests < 3){
             console.log("We have requested a sock " + requests++ + " times");
             
             const response = await axios.post(endpoint, {
@@ -91,9 +91,10 @@ app.post('/sockIdea', async (req, res) => {
                     'Content-Type': 'application/json'
                 }
             });
-        }
 
-        openAIResponse = response.data.choices[0].message.content;
+            openAIResponse = response.data.choices[0].message.content;
+            console.log(openAIResponse)
+        }
 
             if(theme === "Soviet"){
                 formattedResponse = sovietify(openAIResponse);
@@ -102,6 +103,7 @@ app.post('/sockIdea', async (req, res) => {
             }
         
             // Sanitize the response to remove unwanted sections
+            console.log("Sent sock idea!")
             formattedResponse = sanitizeResponse(formattedResponse);
 
         res.send({ response: formattedResponse });

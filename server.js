@@ -93,7 +93,6 @@ app.post('/sockIdea', async (req, res) => {
             });
 
             openAIResponse = response.data.choices[0].message.content;
-            console.log(openAIResponse)
         }
 
             if(theme === "Soviet"){

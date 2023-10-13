@@ -47,7 +47,21 @@ const sovietify = (sentence) => {
 const isCorrectlyFormatted = (text) => {
   const matches = text.match(/;/g);
   return matches && matches.length === 4;
-}
+};
+
+const sanitizeResponse = (response) => {
+    const sectionsToRemove = ["Name:", "Type:", "Description:", "Theme:", "Slogan:"];
+    
+    let sanitizedResponse = response;
+
+    sectionsToRemove.forEach(section => {
+        const regex = new RegExp(section, 'gi');
+        sanitizedResponse = sanitizedResponse.replace(regex, '');
+    });
+
+    return sanitizedResponse.trim(); // Remove any additional spaces at the start or end after removing the sections.
+};
+
 
 app.post('/sockIdea', async (req, res) => {
     const { type, theme } = req.body;
@@ -77,15 +91,18 @@ app.post('/sockIdea', async (req, res) => {
                     'Content-Type': 'application/json'
                 }
             });
-    
-            openAIResponse = response.data.choices[0].message.content;
+        }
+
+        openAIResponse = response.data.choices[0].message.content;
 
             if(theme === "Soviet"){
                 formattedResponse = sovietify(openAIResponse);
             } else {
                 formattedResponse = openAIResponse;
             }
-        }
+        
+            // Sanitize the response to remove unwanted sections
+            formattedResponse = sanitizeResponse(formattedResponse);
 
         res.send({ response: formattedResponse });
 
